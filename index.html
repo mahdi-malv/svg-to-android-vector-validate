@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Android SVG Compatibility Checker</title>
+    <script type="module" crossorigin src="/svg-to-android-vector-validate/assets/index-BXp9PD9g.js"></script>
+    <link rel="stylesheet" crossorigin href="/svg-to-android-vector-validate/assets/index-DXxtkkB0.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="page-header">
+        <h1>Android SVG Compatibility Checker</h1>
+      </header>
+
+      <main class="main-grid">
+        <section class="panel input-panel">
+          <h2>Input</h2>
+
+          <div class="input-section">
+            <h3>Paste SVG</h3>
+            <textarea id="pasteInput" placeholder="Paste SVG content here..."></textarea>
+            <button id="pasteValidateBtn">Validate</button>
+          </div>
+
+          <div class="input-section">
+            <h3>Upload SVG</h3>
+            <input id="fileInput" type="file" accept=".svg,image/svg+xml" />
+            <button id="fileValidateBtn">Validate</button>
+          </div>
+
+          <div class="input-section">
+            <h3>Fetch SVG from URL</h3>
+            <input id="urlInput" type="url" placeholder="https://example.com/icon.svg" />
+            <button id="urlValidateBtn">Fetch &amp; Validate</button>
+          </div>
+
+          <div class="input-section">
+            <h3>Load sample SVGs</h3>
+            <select id="sampleSelect"></select>
+            <button id="loadSampleBtn">Load Sample</button>
+          </div>
+        </section>
+
+        <section class="panel preview-panel">
+          <h2>Preview</h2>
+          <div id="previewNotice" class="notice">No SVG loaded.</div>
+          <div id="previewContainer" class="preview"></div>
+          <button id="exportSanitizedBtn" disabled>Export sanitized SVG</button>
+        </section>
+
+        <section class="panel results-panel">
+          <h2>Validation Results</h2>
+          <div id="statusLine" class="status-line">Waiting for input...</div>
+          <div id="verdictBadge" class="badge badge-pass">PASS</div>
+
+          <div class="actions">
+            <button id="copyReportBtn" disabled>Copy report</button>
+            <button id="downloadReportBtn" disabled>Download report.json</button>
+          </div>
+
+          <div class="stats" id="stats"></div>
+
+          <div class="issues">
+            <h3>Errors</h3>
+            <ul id="errorsList"></ul>
+            <h3>Warnings</h3>
+            <ul id="warningsList"></ul>
+            <h3>Info</h3>
+            <ul id="infoList"></ul>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer-note">
+        This tool uses heuristics. For absolute certainty, import the SVG into Android Studio as Vector Asset and verify visually.
+      </footer>
+    </div>
+
+  </body>
+</html>
