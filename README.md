@@ -1,4 +1,4 @@
-# Android SVG Compatibility Checker
+# Night City Neon SVG Checker
 
 A static, browser-based validator for checking whether an SVG is likely compatible with Android VectorDrawable / Compose workflows.
 
@@ -15,6 +15,9 @@ A static, browser-based validator for checking whether an SVG is likely compatib
   - `FAIL`
 - Shows grouped issues (`error`, `warning`, `info`) with why-it-matters and suggestions
 - Displays SVG stats (size, viewBox, element/path complexity, gradients, transforms, colors)
+- Includes browser render verification:
+  - Inline sanitized SVG preview
+  - Browser render checks (viewport, sizing, external refs, risky features, complexity)
 - Provides:
   - Copyable `report.json`
   - Download `report.json`

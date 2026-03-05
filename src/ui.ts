@@ -10,6 +10,13 @@ type AppState = {
   lastSanitizedSvg?: string;
 };
 
+type RenderCheckLevel = 'pass' | 'warn' | 'fail';
+type RenderCheck = {
+  level: RenderCheckLevel;
+  label: string;
+  details: string;
+};
+
 const state: AppState = {};
 
 function $(id: string): HTMLElement {
@@ -74,18 +81,90 @@ function renderStats(result: ValidationResult): void {
   `;
 }
 
+function renderBrowserChecks(result: ValidationResult): void {
+  const checks: RenderCheck[] = [];
+  const issueCodes = new Set(result.issues.map((issue) => issue.code));
+  const hasViewBox = Boolean(result.stats.viewBox);
+  const hasSizing = Boolean(result.stats.width || result.stats.height);
+
+  checks.push({
+    level: 'pass',
+    label: 'SVG parse',
+    details: 'SVG XML parsed and <svg> root exists.',
+  });
+
+  checks.push({
+    level: hasViewBox ? 'pass' : 'fail',
+    label: 'Scalable viewport',
+    details: hasViewBox ? `viewBox found (${result.stats.viewBox}).` : 'Missing viewBox causes inconsistent browser scaling.',
+  });
+
+  checks.push({
+    level: hasSizing ? 'pass' : 'warn',
+    label: 'Explicit sizing',
+    details: hasSizing ? 'At least one of width/height is set.' : 'No width/height. Browser defaults may vary by context.',
+  });
+
+  const hasExternalRefs = issueCodes.has('external-reference') || issueCodes.has('unsupported-paint-server-ref');
+  checks.push({
+    level: hasExternalRefs ? 'fail' : 'pass',
+    label: 'External dependency risk',
+    details: hasExternalRefs
+      ? 'External href/paint references can fail due to CORS/path differences.'
+      : 'No risky external references detected.',
+  });
+
+  const hasUnsupportedConstructs =
+    issueCodes.has('script-or-events') ||
+    issueCodes.has('unsupported-foreignObject') ||
+    issueCodes.has('unsupported-filter') ||
+    issueCodes.has('embedded-raster-image') ||
+    issueCodes.has('unsupported-animation') ||
+    issueCodes.has('unsupported-mask');
+  checks.push({
+    level: hasUnsupportedConstructs ? 'warn' : 'pass',
+    label: 'Cross-browser feature risk',
+    details: hasUnsupportedConstructs
+      ? 'Detected constructs known to render inconsistently or unsafely.'
+      : 'No high-risk browser feature usage detected.',
+  });
+
+  const isComplex =
+    result.stats.elementCount > 200 ||
+    result.stats.pathCount > 50 ||
+    result.stats.maxPathDLength > 5000 ||
+    result.stats.nestedTransformDepthMax > 3;
+  checks.push({
+    level: isComplex ? 'warn' : 'pass',
+    label: 'Complexity/performance',
+    details: isComplex
+      ? 'High complexity may cause jank on lower-end devices.'
+      : 'Complexity is within conservative browser-friendly thresholds.',
+  });
+
+  const listEl = $('renderChecksList');
+  listEl.innerHTML = '';
+  for (const check of checks) {
+    const li = document.createElement('li');
+    li.className = `render-check render-check-${check.level}`;
+    li.innerHTML = `<strong>${check.label}:</strong> ${check.details}`;
+    listEl.appendChild(li);
+  }
+}
+
 function renderPreview(svgText: string, result: ValidationResult): void {
   const previewNotice = $('previewNotice');
   const previewContainer = $('previewContainer');
   const exportBtn = $('exportSanitizedBtn') as HTMLButtonElement;
 
   previewContainer.innerHTML = '';
+  renderBrowserChecks(result);
 
   const sanitizeResult = sanitizeSvgForPreview(svgText);
   state.lastSanitizedSvg = sanitizeResult.sanitizedSvg;
 
-  if (result.dangerousForPreview || sanitizeResult.blockedPreview) {
-    previewNotice.textContent = 'Preview disabled for safety.';
+  if (!sanitizeResult.sanitizedSvg.trim()) {
+    previewNotice.textContent = 'Unable to render preview from sanitized SVG.';
     exportBtn.disabled = sanitizeResult.sanitizedSvg.length === 0;
     if (sanitizeResult.reasons.length > 0) {
       previewNotice.textContent += ` ${sanitizeResult.reasons[0]}`;
@@ -94,6 +173,9 @@ function renderPreview(svgText: string, result: ValidationResult): void {
   }
 
   previewNotice.textContent = 'Preview rendered from sanitized SVG.';
+  if (sanitizeResult.removedCount > 0) {
+    previewNotice.textContent += ` Removed ${sanitizeResult.removedCount} risky item(s).`;
+  }
   previewContainer.innerHTML = sanitizeResult.sanitizedSvg;
   exportBtn.disabled = sanitizeResult.sanitizedSvg.length === 0;
 }
@@ -129,6 +211,7 @@ function onValidationError(message: string): void {
   $('statusLine').textContent = message;
   $('previewNotice').textContent = message;
   $('previewContainer').innerHTML = '';
+  $('renderChecksList').innerHTML = '';
   ($('copyReportBtn') as HTMLButtonElement).disabled = true;
   ($('downloadReportBtn') as HTMLButtonElement).disabled = true;
   ($('exportSanitizedBtn') as HTMLButtonElement).disabled = true;

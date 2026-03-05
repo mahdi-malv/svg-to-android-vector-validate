@@ -1,12 +1,17 @@
+@import url("https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Orbitron:wght@500;700&display=swap");
+
 :root {
-  --bg: #f3f4f6;
-  --panel: #ffffff;
-  --border: #d1d5db;
-  --text: #111827;
-  --subtle: #4b5563;
-  --pass: #047857;
-  --warn: #b45309;
-  --fail: #b91c1c;
+  --bg: #060910;
+  --bg-glow-1: #10212f;
+  --bg-glow-2: #2a1242;
+  --panel: rgba(12, 18, 29, 0.82);
+  --panel-edge: rgba(85, 240, 255, 0.36);
+  --text: #d6faff;
+  --subtle: #86a4bd;
+  --pass: #00df90;
+  --warn: #ffb65c;
+  --fail: #ff4d83;
+  --accent: #35f2ff;
 }
 
 * {
@@ -15,19 +20,34 @@
 
 body {
   margin: 0;
-  background: linear-gradient(160deg, #eef2ff 0%, #f8fafc 50%, #e0f2fe 100%);
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 15% 10%, var(--bg-glow-1) 0%, transparent 40%),
+    radial-gradient(circle at 85% 5%, var(--bg-glow-2) 0%, transparent 35%),
+    linear-gradient(170deg, #04070d 0%, var(--bg) 55%, #0b0f1a 100%);
   color: var(--text);
-  font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+  font-family: "Chakra Petch", "Trebuchet MS", sans-serif;
 }
 
 .app-shell {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 1rem;
+  padding: 1.2rem;
 }
 
 .page-header h1 {
-  margin: 0 0 1rem;
+  margin: 0;
+  font-family: "Orbitron", "Chakra Petch", sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #f1fbff;
+  text-shadow: 0 0 14px rgba(53, 242, 255, 0.5);
+}
+
+.page-subtitle {
+  margin: 0.35rem 0 1rem;
+  color: var(--subtle);
+  letter-spacing: 0.03em;
 }
 
 .main-grid {
@@ -38,9 +58,19 @@ body {
 
 .panel {
   background: var(--panel);
-  border: 1px solid var(--border);
+  border: 1px solid var(--panel-edge);
   border-radius: 10px;
   padding: 0.9rem;
+  box-shadow: 0 0 0 1px rgba(53, 242, 255, 0.11), 0 16px 38px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+}
+
+.panel h2,
+.panel h3 {
+  font-family: "Orbitron", "Chakra Petch", sans-serif;
+  letter-spacing: 0.05em;
+  color: #bdf7ff;
+  text-transform: uppercase;
 }
 
 .input-section {
@@ -54,14 +84,22 @@ button {
   width: 100%;
   margin-top: 0.35rem;
   padding: 0.55rem;
-  border: 1px solid var(--border);
+  border: 1px solid rgba(53, 242, 255, 0.3);
   border-radius: 6px;
   font: inherit;
+  color: var(--text);
+  background: rgba(2, 8, 16, 0.7);
 }
 
 button {
   cursor: pointer;
-  background: #f9fafb;
+  background: linear-gradient(120deg, rgba(53, 242, 255, 0.22), rgba(168, 75, 255, 0.2));
+  font-weight: 600;
+}
+
+button:hover:not(:disabled) {
+  border-color: var(--accent);
+  box-shadow: 0 0 18px rgba(53, 242, 255, 0.25);
 }
 
 button:disabled {
@@ -81,14 +119,14 @@ textarea {
 }
 
 .preview {
-  border: 1px dashed var(--border);
+  border: 1px dashed rgba(53, 242, 255, 0.42);
   border-radius: 8px;
   min-height: 180px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: auto;
-  background: #f9fafb;
+  background: rgba(5, 14, 26, 0.88);
   padding: 0.5rem;
 }
 
@@ -107,7 +145,7 @@ textarea {
   font-weight: 700;
   padding: 0.3rem 0.7rem;
   border-radius: 999px;
-  color: #ffffff;
+  color: #0a0f1a;
   margin-bottom: 0.6rem;
 }
 
@@ -152,21 +190,81 @@ textarea {
 
 .issue-why {
   font-size: 0.87rem;
-  color: #374151;
+  color: #99b5c9;
 }
 
 .issue-suggestion {
   font-size: 0.87rem;
-  color: #1f2937;
+  color: #b9d5e8;
+}
+
+#errorsList .issue-card {
+  color: #ffd6de;
+}
+
+#errorsList .issue-code {
+  color: #ff9bb4;
+}
+
+#errorsList .issue-why,
+#errorsList .issue-suggestion {
+  color: #ffc2cf;
+}
+
+#warningsList .issue-card {
+  color: #ffe7c4;
+}
+
+#warningsList .issue-code {
+  color: #ffcf89;
+}
+
+#warningsList .issue-why,
+#warningsList .issue-suggestion {
+  color: #ffe0b3;
+}
+
+#infoList .issue-card {
+  color: #d7f4ff;
+}
+
+#infoList .issue-code {
+  color: #9ed9ef;
+}
+
+#infoList .issue-why,
+#infoList .issue-suggestion {
+  color: #c8eafb;
+}
+
+.render-checks {
+  margin: 0.4rem 0 0.9rem;
+  padding-left: 1.1rem;
+}
+
+.render-check {
+  margin-bottom: 0.35rem;
+}
+
+.render-check-pass {
+  color: #9af2cb;
+}
+
+.render-check-warn {
+  color: #ffd18e;
+}
+
+.render-check-fail {
+  color: #ff8faa;
 }
 
 .footer-note {
   margin-top: 1rem;
   font-size: 0.9rem;
-  color: #1f2937;
+  color: #bcf5ff;
   padding: 0.85rem;
-  background: #ecfeff;
-  border: 1px solid #a5f3fc;
+  background: rgba(8, 20, 35, 0.74);
+  border: 1px solid rgba(53, 242, 255, 0.35);
   border-radius: 8px;
 }
 
