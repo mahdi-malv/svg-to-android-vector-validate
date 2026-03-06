@@ -2,6 +2,8 @@
 
 A static, browser-based validator for checking whether an SVG is likely compatible with Android VectorDrawable / Compose workflows.
 
+<a href="https://mahdi-malv.github.io/svg-to-android-vector-validate/" target="_blank"><img src="https://img.shields.io/badge/Preview-it?style=for-the-badge&logoColor=blue&label=Click%20to%20try" alt="Preview" /></a>
+
 ## What it does
 
 - Accepts SVG input via:
