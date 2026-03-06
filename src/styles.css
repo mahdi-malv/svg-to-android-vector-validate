@@ -126,7 +126,7 @@ textarea {
   align-items: center;
   justify-content: center;
   overflow: auto;
-  background: rgba(5, 14, 26, 0.88);
+  background: rgba(255, 255, 255, 1.0);
   padding: 0.5rem;
 }
 
